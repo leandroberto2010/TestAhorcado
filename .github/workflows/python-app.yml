@@ -30,8 +30,17 @@ jobs:
         pip install pyautogui
         pip install pytest pytest-cov coverage
 
+    - name: Install xvfb
+      run: sudo apt-get install -y xvfb
+    - name: Start xvfb
+      run: |
+        Xvfb :99 -screen 0 1024x768x16 &
+        echo "Xvfb started"
+
     # Paso 4: Ejecutar pruebas con cobertura
     - name: Run tests with coverage
+      env:
+        DISPLAY: :99
       run: |
         pytest --cov=ahorcado --cov-report=xml
         pytest --cov=AhorcadoApp --cov-report=xml
