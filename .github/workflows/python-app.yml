@@ -1,59 +1,28 @@
-name: Code Coverage
+name: Run tests and upload coverage
 
-on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+on: 
+  push
 
 jobs:
-  test-and-coverage:
+  test:
+    name: Run tests and collect coverage
     runs-on: ubuntu-latest
-
     steps:
-    # Paso 1: Clonar el repositorio
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-    # Paso 2: Configurar Python
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: 3.9
+      - name: Set up Python
+        uses: actions/setup-python@v4
 
-    # Paso 3: Instalar dependencias
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install pyautogui
-        pip install pytest pytest-cov coverage
+      - name: Install dependencies
+        run: pip install pytest pytest-cov
 
-    - name: Install xvfb
-      run: sudo apt-get install -y xvfb x11-utils
-    - name: Start xvfb
-      run: |
-        Xvfb :99 -screen 0 1024x768x16 &
-        export DISPLAY=:99
-        sleep 3  # Espera breve para asegurar que Xvfb esté listo
-        xhost +SI:localuser:runner  
+      - name: Run tests
+        run: pytest --cov --cov-report=xml
 
-    # Paso 4: Ejecutar pruebas con cobertura
-    - name: Run tests with coverage
-      env:
-        DISPLAY: :99
-      run: |
-        pytest --cov=ahorcado --cov-report=xml
-        pytest --cov=AhorcadoApp --cov-report=xml
-
-    # Paso 5: Mostrar reporte de cobertura en consola
-    - name: Display coverage report
-      run: coverage report
-
-    # Paso 6: Subir reporte de cobertura como artefacto
-    - name: Upload coverage report
-      uses: actions/upload-artifact@v3
-      with:
-        name: coverage-report
-        path: coverage.xml
+      - name: Upload results to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
