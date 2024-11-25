@@ -35,7 +35,9 @@ jobs:
     - name: Start xvfb
       run: |
         Xvfb :99 -screen 0 1024x768x16 &
-        echo "Xvfb started"
+        export DISPLAY=:99
+        sleep 3  # Espera breve para asegurar que Xvfb esté listo
+        xhost +SI:localuser:runner  
 
     # Paso 4: Ejecutar pruebas con cobertura
     - name: Run tests with coverage
