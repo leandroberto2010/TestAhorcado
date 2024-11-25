@@ -27,11 +27,10 @@ jobs:
     - name: Run unit tests for ahorcado logic
       run: |
         pip install pytest pytest-cov
-        pytest test_unitario_ahorcado.py
+        pytest --cov --cov-report=xml
 
 
-    - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v3
+    - name: Upload results to Codecov
+      uses: codecov/codecov-action@v4
       with:
-        file: coverage.xml
-        fail_ci_if_error: true
+        token: ${{ secrets.CODECOV_TOKEN }}
