@@ -27,7 +27,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pyp install pyautogui
+        pip install pyautogui
         pip install pytest pytest-cov coverage
 
     # Paso 4: Ejecutar pruebas con cobertura
